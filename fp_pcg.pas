@@ -39,11 +39,9 @@ type
     Series9: TLineSeries;
     Series8: TLineSeries;
     Series10: TLineSeries;
-    lst2: TListBox;
     Series11: TLineSeries;
     Series12: TLineSeries;
     lst3: TListBox;
-    lst4: TListBox;
     lbledt4: TLabeledEdit;
     lbledt5: TLabeledEdit;
     Series13: TLineSeries;
@@ -52,12 +50,16 @@ type
     Series15: TLineSeries;
     Series16: TLineSeries;
     Series17: TLineSeries;
+    btn8: TBitBtn;
+    lst5: TListBox;
+    lst6: TListBox;
     procedure btn1Click(Sender: TObject);
     procedure btn3Click(Sender: TObject);
     procedure btn4Click(Sender: TObject);
     procedure btn5Click(Sender: TObject);
     procedure btn6Click(Sender: TObject);
     procedure btn7Click(Sender: TObject);
+    procedure btn8Click(Sender: TObject);
   private
     { Private declarations }
   public
@@ -96,10 +98,8 @@ begin
   Series8.Clear;
   Series9.Clear;
   Series10.Clear;
-//  Series15.Clear;
 
   lst1.Clear;
-  lst2.Clear;
 
   data_size := 0;
   if open_dialog.Execute then
@@ -217,7 +217,6 @@ end;
 procedure TForm1.btn6Click(Sender: TObject);
 var
   i, j, k, count_s2, count2_s2 : Integer;
-  threshold_time : Double;
 begin
   Series5.Clear;
   Series10.Clear;
@@ -226,12 +225,10 @@ begin
   threshold_s1 := -999999;
   count_s2 := 0;
   count2_s2 := 0;
-  threshold_time := 0.5;
   SetLength(rising_edge_time_s2, 0);
   SetLength(falling_edge_time_s2, 0);
 
   lst3.Clear;
-  lst4.Clear;
 
   for i := 0 to data_size - 1 do
   begin
@@ -337,8 +334,7 @@ begin
 
   for i := 0 to High(rising_edge_time_s2) do
   begin
-    lst3.Items.Add('Rising Time: ' + FloatToStr(rising_edge_time_s2[i]));
-    lst4.Items.Add('Falling Time: ' + FloatToStr(falling_edge_time_s2[i]));
+    lst3.Items.Add('sequence ' + IntToStr(i + 1) + ': ' + FloatToStr(rising_edge_time_s2[i] + (falling_edge_time_s2[i] - rising_edge_time_s2[i]) / 2));
   end;
 
   for i := 0 to data_size - 1 do
@@ -353,7 +349,7 @@ end;
 
 procedure TForm1.btn7Click(Sender: TObject);
 var
-  i, j, count, count2 : Integer;
+  i, count, count2 : Integer;
 begin
   Series6.Clear;
   Series7.Clear;
@@ -367,7 +363,6 @@ begin
   SetLength(rising_edge_time, 0);
   SetLength(falling_edge_time, 0);
   lst1.Clear;
-  lst2.Clear;
 
   for i := 0 to data_size - 1 do
   begin
@@ -385,10 +380,9 @@ begin
     end;
   end;
 
-  for i := 1 to High(rising_edge_time) do
+  for i := 0 to High(rising_edge_time) do
   begin
-    lst1.Items.Add('Rising time: ' + FloatToStr(rising_edge_time[i]));
-    lst2.Items.Add('Falling time: ' + FloatToStr(falling_edge_time[i]));
+    lst1.Items.Add('sequence ' + IntToStr(i + 1) + ': ' + FloatToStr(rising_edge_time[i] + (falling_edge_time[i] - rising_edge_time[i]) / 2));
   end;
 
   for i := 0 to data_size - 1 do
@@ -403,5 +397,59 @@ begin
   end;
 end;
 
+procedure TForm1.btn8Click(Sender: TObject);
+var
+  i, count, count2 : Integer;
+  s1_s2_interval, s2_s1_interval : array of Double;
+  sum_1, sum_2, systole_avr, diastole_avr : Double;
+begin
+  // systole 0.3 - 0.5
+  // dyastole 0.5 - 0.7
+  lst5.Clear;
+  lst6.Clear;
+  SetLength(s1_s2_interval, 0);
+  SetLength(s2_s1_interval, 0);
+  count := 0;
+  count2 := 0;
+  sum_1 := 0;
+  sum_2 := 0;
+  systole_avr := 0;
+  diastole_avr := 0;
+
+  for i := 0 to High(rising_edge_time) do
+  begin
+    if (i + 1) <= High(rising_edge_time_s2) then
+    begin
+      SetLength(s1_s2_interval, count + 1);
+      s1_s2_interval[count] := (rising_edge_time_s2[i + 1] + (falling_edge_time_s2[i + 1] - rising_edge_time_s2[i + 1]) / 2) - (rising_edge_time[i] + (falling_edge_time[i] - rising_edge_time[i]) / 2);
+      lst6.Items.Add('s1_s2: ' + FloatToStr(s1_s2_interval[count]));
+      count := count + 1;
+    end;
+
+    if (i + 1) <= High(rising_edge_time_s2) then
+    begin
+      SetLength(s2_s1_interval, count2 + 1);
+      s2_s1_interval[count2] := (rising_edge_time[i] + (falling_edge_time[i] - rising_edge_time[i]) / 2) - (rising_edge_time_s2[i] + (falling_edge_time_s2[i] - rising_edge_time_s2[i]) / 2);
+      lst6.Items.Add('s2_s1: ' + FloatToStr(s2_s1_interval[count2]));
+      count2 := count2 + 1;
+    end;
+  end;
+
+  for i := 0 to High(s1_s2_interval) do
+  begin
+    sum_1 := sum_1 + s1_s2_interval[i];
+  end;
+
+  for i := 0 to High(s2_s1_interval) do
+  begin
+    sum_2 := sum_2 + s2_s1_interval[i];
+  end;
+
+  systole_avr := sum_1 / count;
+  diastole_avr := sum_2 / count2;
+
+  lst5.Items.Add('Systole interval : ' + FloatToStr(systole_avr));
+  lst5.Items.Add('Diastole interval : ' + FloatToStr(diastole_avr));
+end;
 
 end.

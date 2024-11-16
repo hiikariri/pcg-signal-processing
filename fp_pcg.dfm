@@ -1,8 +1,8 @@
 object Form1: TForm1
-  Left = 183
-  Top = 122
-  Width = 1326
-  Height = 707
+  Left = 126
+  Top = 192
+  Width = 1215
+  Height = 596
   Caption = 'Form1'
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
@@ -30,7 +30,7 @@ object Form1: TForm1
     Left = 8
     Top = 48
     Width = 129
-    Height = 529
+    Height = 561
     Caption = 'Control Panel'
     TabOrder = 0
     object btn1: TBitBtn
@@ -44,7 +44,7 @@ object Form1: TForm1
     end
     object btn2: TBitBtn
       Left = 16
-      Top = 480
+      Top = 520
       Width = 97
       Height = 33
       TabOrder = 1
@@ -149,6 +149,15 @@ object Form1: TForm1
       EditLabel.Caption = 'S2 Threshold'
       TabOrder = 11
       Text = '0.015'
+    end
+    object btn8: TBitBtn
+      Left = 16
+      Top = 480
+      Width = 97
+      Height = 33
+      Caption = 'Calculate Interval'
+      TabOrder = 12
+      OnClick = btn8Click
     end
   end
   object cht1: TChart
@@ -451,33 +460,17 @@ object Form1: TForm1
     Left = 1384
     Top = 288
     Width = 121
-    Height = 105
+    Height = 225
     ItemHeight = 13
     TabOrder = 8
-  end
-  object lst2: TListBox
-    Left = 1384
-    Top = 408
-    Width = 121
-    Height = 105
-    ItemHeight = 13
-    TabOrder = 9
   end
   object lst3: TListBox
     Left = 1384
     Top = 528
     Width = 121
-    Height = 105
+    Height = 225
     ItemHeight = 13
-    TabOrder = 10
-  end
-  object lst4: TListBox
-    Left = 1384
-    Top = 648
-    Width = 121
-    Height = 105
-    ItemHeight = 13
-    TabOrder = 11
+    TabOrder = 9
   end
   object cht8: TChart
     Left = 144
@@ -490,7 +483,7 @@ object Form1: TForm1
     Title.Text.Strings = (
       'Final Result')
     View3D = False
-    TabOrder = 12
+    TabOrder = 10
     object Series15: TLineSeries
       Marks.ArrowLength = 8
       Marks.Callout.Brush.Color = clBlack
@@ -534,8 +527,24 @@ object Form1: TForm1
       YValues.Name = 'Y'
     end
   end
+  object lst5: TListBox
+    Left = 16
+    Top = 616
+    Width = 121
+    Height = 97
+    ItemHeight = 13
+    TabOrder = 11
+  end
+  object lst6: TListBox
+    Left = 1384
+    Top = 48
+    Width = 121
+    Height = 225
+    ItemHeight = 13
+    TabOrder = 12
+  end
   object open_dialog: TOpenDialog
-    Left = 8
-    Top = 496
+    Left = 24
+    Top = 752
   end
 end
